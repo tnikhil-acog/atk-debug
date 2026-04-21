@@ -40,8 +40,8 @@ log('Request received', { method: 'GET', url: '/health' });
 
 ## Essential Documentation
 
-- 📘 **[Full Guide](./GUIDE.md)**: Deep dive into all features and configuration.
-- 🧪 **[Examples](./examples/)**: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
+- 📘 **[Full Guide](https://github.com/tnikhil-acog/atk-debug/blob/main/GUIDE.md)**: Deep dive into all features and configuration.
+- 🧪 **[Examples](https://github.com/tnikhil-acog/atk-debug/tree/main/examples)**: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
 
 ## Development
 
@@ -51,4 +51,3 @@ log('Request received', { method: 'GET', url: '/health' });
 
 ---
 
-Developed with ❤️ by [Aganitha](https://aganitha.ai).
