@@ -1,0 +1,11 @@
+src
+test
+examples
+scratch
+tsconfig.json
+tsconfig.build.json
+bun.lock
+bun.lockb
+.env
+.gitignore
+*.log

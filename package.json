@@ -1,0 +1,59 @@
+{
+  "name": "@aganitha/atk-debug",
+  "version": "0.1.0",
+  "description": "Thin debug wrapper with caller metadata, namespace tools, and runnable examples",
+  "license": "MIT",
+  "author": "Aganitha <support@aganitha.ai>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aganitha/atk-debug.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aganitha/atk-debug/issues"
+  },
+  "homepage": "https://github.com/aganitha/atk-debug#readme",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "example:basic": "DEBUG=workflow:bootstrap:* bun examples/01-basic-usage.ts",
+    "example:namespaces": "DEBUG=workflow:http:*,workflow:data:* bun examples/02-namespaces.ts",
+    "example:structured": "DEBUG=workflow:user-ingest:* bun examples/03-structured-logging.ts",
+    "example:advanced": "DEBUG=workflow:jobs:* bun examples/08-redirect-output.ts",
+    "example:controls": "bun examples/15-dev-only-toggle.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "test": "bun test",
+    "test:snippets": "bun test test/snippets.test.ts",
+    "test:examples": "bun run test:snippets",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "debug",
+    "logging",
+    "namespace",
+    "developer-experience"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "debug": "^4.3.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.1",
+    "@types/debug": "^4.1.13",
+    "@types/node": "^25.6.0",
+    "typescript": "^5.8.0"
+  }
+}
