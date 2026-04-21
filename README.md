@@ -2,17 +2,17 @@
 
 > A powerful, thin wrapper around the popular `debug` package, enhanced with caller metadata (file/line) and advanced runtime controls.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
+<a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+<a href="https://bun.sh" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white" alt="Bun" /></a>
 
 ## Why atk-debug?
 
 `atk-debug` is designed for developers who love the `debug` namespace pattern but need more visibility into *where* logs are coming from, and more control over *when* they appear.
 
-- 📂 **Automatic Caller Metadata**: Automatically capture and display the filename and line number for every log.
-- 🛠️ **Runtime Control**: Enable/disable logging, caller metadata, and production-safety toggles on the fly.
-- 🔄 **Core Compatibility**: 100% parity with the `debug` API. If you know `debug`, you already know `atk-debug`.
-- 🚀 **Performance Focused**: Minimal overhead, with the ability to disable metadata capture for performance-critical paths.
+- **Automatic Caller Metadata**: Automatically capture and display the filename and line number for every log.
+- **Runtime Control**: Enable/disable logging, caller metadata, and production-safety toggles on the fly.
+- **Core Compatibility**: 100% parity with the `debug` API. If you know `debug`, you already know `atk-debug`.
+- **Performance Focused**: Minimal overhead, with the ability to disable metadata capture for performance-critical paths.
 
 ## Installation
 
@@ -40,8 +40,8 @@ log('Request received', { method: 'GET', url: '/health' });
 
 ## Essential Documentation
 
-- 📘 **[Full Guide](https://github.com/tnikhil-acog/atk-debug/blob/main/GUIDE.md)**: Deep dive into all features and configuration.
-- 🧪 **[Examples](https://github.com/tnikhil-acog/atk-debug/tree/main/examples)**: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
+- <strong><a href="https://github.com/tnikhil-acog/atk-debug/blob/main/GUIDE.md" target="_blank" rel="noopener noreferrer">Full Guide</a></strong>: Deep dive into all features and configuration.
+- <strong><a href="https://github.com/tnikhil-acog/atk-debug/tree/main/examples" target="_blank" rel="noopener noreferrer">Examples</a></strong>: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
 
 ## Development
 

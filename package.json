@@ -1,6 +1,6 @@
 {
   "name": "@aganitha/atk-debug",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "Thin debug wrapper with caller metadata, namespace tools, and runnable examples",
   "license": "MIT",
   "author": "Aganitha <support@aganitha.ai>",
