@@ -40,7 +40,10 @@ type CallerInfo = {
 	line: number;
 };
 
-type DebugWithMeta = ((...args: unknown[]) => void) & {
+/**
+ * A debugger function enhanced with metadata and parity helpers.
+ */
+export type DebugWithMeta = ((...args: unknown[]) => void) & {
 	namespace: string;
 	enabled: boolean;
 	useColors: boolean;
@@ -51,7 +54,10 @@ type DebugWithMeta = ((...args: unknown[]) => void) & {
 	extend: (subNamespace: string, delimiter?: string) => DebugWithMeta;
 };
 
-type DebugTools = {
+/**
+ * Static helper surface delegated from the underlying core `debug` module.
+ */
+export type DebugTools = {
 	enable: (namespaces: string) => void;
 	disable: () => string;
 	enabled: (name: string) => boolean;
@@ -271,6 +277,12 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 	return wrap;
 }
 
+/**
+ * Creates a wrapped debugger for a namespace.
+ *
+ * The wrapper preserves core `debug` behavior while optionally prefixing output
+ * with caller metadata in the form `[file:line]`.
+ */
 export function createDebug(namespace: string): DebugWithMeta {
 	const core = coreDebug(namespace) as CoreDebugger;
 	const declarationCaller = getCallerInfo();
