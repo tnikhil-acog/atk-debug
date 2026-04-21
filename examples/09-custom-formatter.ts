@@ -1,10 +1,10 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-atkDebug.formatters.h = (v: unknown) => Buffer.from(String(v)).toString('hex');
-atkDebug.formatters.j = (v: unknown) => JSON.stringify(v);
+debug.formatters.h = (v: unknown) => Buffer.from(String(v)).toString('hex');
+debug.formatters.j = (v: unknown) => JSON.stringify(v);
 
-const encodeLog = atkDebug('workflow:events:encode');
-const publishLog = atkDebug('workflow:events:publish');
+const encodeLog = debug('workflow:events:encode');
+const publishLog = debug('workflow:events:publish');
 
 const payload = {
   id: 'evt-22',

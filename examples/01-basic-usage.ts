@@ -1,4 +1,4 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 type BootConfig = {
   host: string;
@@ -14,8 +14,8 @@ type ServerState = {
   ok: boolean;
 };
 
-const bootstrapLog = atkDebug('workflow:bootstrap:init');
-const healthLog = atkDebug('workflow:bootstrap:health');
+const bootstrapLog = debug('workflow:bootstrap:init');
+const healthLog = debug('workflow:bootstrap:health');
 
 function bootServer(config: BootConfig): ServerState {
   bootstrapLog('Boot requested with config: %O', config);

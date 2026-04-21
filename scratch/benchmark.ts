@@ -1,6 +1,6 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-const log = atkDebug('benchmark');
+const log = debug('benchmark');
 log.enabled = true;
 // Redirect log output to a no-op to measure purely the metadata overhead
 log.log = () => { };
@@ -8,7 +8,7 @@ log.log = () => { };
 const ITERATIONS = 1000000;
 
 function runBenchmark(withMeta: boolean) {
-	atkDebug.setCallerMetaEnabled(withMeta);
+	debug.setCallerMetaEnabled(withMeta);
 
 	const start = performance.now();
 	for (let i = 0; i < ITERATIONS; i++) {

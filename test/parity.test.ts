@@ -1,42 +1,42 @@
 import { test, expect, describe } from 'bun:test';
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 describe('API Parity with core debug', () => {
 	test('should have all expected core properties', () => {
-		expect(atkDebug.enable).toBeDefined();
-		expect(atkDebug.disable).toBeDefined();
-		expect(atkDebug.enabled).toBeDefined();
-		expect(atkDebug.coerce).toBeDefined();
-		expect(atkDebug.formatArgs).toBeDefined();
-		expect(atkDebug.selectColor).toBeDefined();
-		expect(atkDebug.formatters).toBeDefined();
-		expect(atkDebug.names).toBeDefined();
-		expect(atkDebug.skips).toBeDefined();
-		expect(atkDebug.inspectOpts).toBeDefined();
-		expect(atkDebug.humanize).toBeDefined();
-		expect(atkDebug.log).toBeDefined();
+		expect(debug.enable).toBeDefined();
+		expect(debug.disable).toBeDefined();
+		expect(debug.enabled).toBeDefined();
+		expect(debug.coerce).toBeDefined();
+		expect(debug.formatArgs).toBeDefined();
+		expect(debug.selectColor).toBeDefined();
+		expect(debug.formatters).toBeDefined();
+		expect(debug.names).toBeDefined();
+		expect(debug.skips).toBeDefined();
+		expect(debug.inspectOpts).toBeDefined();
+		expect(debug.humanize).toBeDefined();
+		expect(debug.log).toBeDefined();
 		
 		// New parity exports
-		expect(atkDebug.colors).toBeDefined();
-		expect(atkDebug.useColors).toBeDefined();
-		expect(atkDebug.init).toBeDefined();
-		expect(atkDebug.save).toBeDefined();
-		expect(atkDebug.load).toBeDefined();
+		expect(debug.colors).toBeDefined();
+		expect(debug.useColors).toBeDefined();
+		expect(debug.init).toBeDefined();
+		expect(debug.save).toBeDefined();
+		expect(debug.load).toBeDefined();
 		
 		// New meta controls
-		expect(atkDebug.setCallerMetaEnabled).toBeDefined();
-		expect(atkDebug.getCallerMetaEnabled).toBeDefined();
+		expect(debug.setCallerMetaEnabled).toBeDefined();
+		expect(debug.getCallerMetaEnabled).toBeDefined();
 	});
 
 	test('should have circular aliases for parity', () => {
-		expect(atkDebug.debug).toBe(atkDebug);
-		expect(atkDebug.default).toBe(atkDebug);
+		expect(debug.debug).toBe(debug);
+		expect(debug.default).toBe(debug);
 	});
 });
 
 describe('Multiple Argument Handling', () => {
 	test('should handle multiple arguments without format string', () => {
-		const log = atkDebug('test:args');
+		const log = debug('test:args');
 		log.enabled = true;
 		log.useColors = false; // Disable colors for predictable output
 		let lastArgs: any[] = [];
@@ -63,7 +63,7 @@ describe('Multiple Argument Handling', () => {
 	});
 
 	test('should handle multiple arguments with format string', () => {
-		const log = atkDebug('test:format');
+		const log = debug('test:format');
 		log.enabled = true;
 		log.useColors = false;
 		let lastArgs: any[] = [];
@@ -80,19 +80,19 @@ describe('Multiple Argument Handling', () => {
 
 describe('Caller Metadata Toggle', () => {
 	test('should respect caller metadata toggle', () => {
-		const log = atkDebug('test:toggle');
+		const log = debug('test:toggle');
 		log.enabled = true;
 		log.useColors = false;
 		let lastArgs: any[] = [];
 		log.log = (...args) => { lastArgs = args; };
 
-		atkDebug.setCallerMetaEnabled(false);
+		debug.setCallerMetaEnabled(false);
 		log('no metadata');
 		// Should NOT contain the [file:line] meta, but standard debug namespace prefix remains
 		expect(lastArgs[0]).not.toContain('[%s:%d]');
 		expect(lastArgs[0]).toContain('no metadata');
 
-		atkDebug.setCallerMetaEnabled(true);
+		debug.setCallerMetaEnabled(true);
 		log('with metadata');
 		expect(lastArgs[0]).toContain('[%s:%d] with metadata');
 	});

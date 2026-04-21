@@ -1,4 +1,4 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 type RawUserInput = {
   id: number;
@@ -16,8 +16,8 @@ type SanitizedUser = {
   safeTokenPreview: string | null;
 };
 
-const ingestLog = atkDebug('workflow:user-ingest:payload');
-const sanitizeLog = atkDebug('workflow:user-ingest:sanitize');
+const ingestLog = debug('workflow:user-ingest:payload');
+const sanitizeLog = debug('workflow:user-ingest:sanitize');
 
 function sanitizeUser(input: RawUserInput): SanitizedUser {
   const user = {

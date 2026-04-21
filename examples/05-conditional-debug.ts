@@ -1,12 +1,12 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 type ComputationResult = {
   limit: number;
   score: number;
 };
 
-const gateLog = atkDebug('workflow:compute:gate');
-const traceLog = atkDebug('workflow:compute:trace');
+const gateLog = debug('workflow:compute:gate');
+const traceLog = debug('workflow:compute:trace');
 
 function heavyComputation(limit: number): ComputationResult {
   let score = 0;

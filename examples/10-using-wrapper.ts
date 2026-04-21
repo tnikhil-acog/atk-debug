@@ -1,4 +1,4 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 type CreatedUser = {
   id: number;
@@ -7,7 +7,7 @@ type CreatedUser = {
   createdAt: string;
 };
 
-const log = atkDebug('workflow:user:create');
+const log = debug('workflow:user:create');
 const validationLog = log.extend('validation');
 const serviceLog = log.extend('service');
 

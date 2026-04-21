@@ -1,7 +1,7 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-const stepLog = atkDebug('workflow:perf:step');
-const summaryLog = atkDebug('workflow:perf:summary');
+const stepLog = debug('workflow:perf:step');
+const summaryLog = debug('workflow:perf:summary');
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,42 +1,42 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 describe('core debug compatibility', () => {
   test('default export is callable and returns debugger', () => {
-    const logger = atkDebug('compat:callable');
+    const logger = debug('compat:callable');
     assert.equal(typeof logger, 'function');
     assert.equal(logger.namespace, 'compat:callable');
   });
 
   test('static enable/disable/enabled passthrough works', () => {
-    atkDebug.setDevOnly(false);
-    atkDebug.disable();
-    atkDebug.enable('compat:static');
+    debug.setDevOnly(false);
+    debug.disable();
+    debug.enable('compat:static');
 
-    assert.equal(atkDebug.enabled('compat:static'), true);
+    assert.equal(debug.enabled('compat:static'), true);
 
-    const disabled = atkDebug.disable();
+    const disabled = debug.disable();
     assert.equal(typeof disabled, 'string');
-    assert.equal(atkDebug.enabled('compat:static'), false);
+    assert.equal(debug.enabled('compat:static'), false);
 
-    atkDebug.setDevOnly(true);
+    debug.setDevOnly(true);
   });
 
   test('devOnly is configurable', () => {
     const previousNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
-    atkDebug.enable('compat:prod');
-    assert.equal(atkDebug.enabled('compat:prod'), false);
+    debug.enable('compat:prod');
+    assert.equal(debug.enabled('compat:prod'), false);
 
-    atkDebug.setDevOnly(false);
-    atkDebug.enable('compat:prod');
-    assert.equal(atkDebug.enabled('compat:prod'), true);
+    debug.setDevOnly(false);
+    debug.enable('compat:prod');
+    assert.equal(debug.enabled('compat:prod'), true);
 
-    atkDebug.setDevOnly(true);
-    atkDebug.disable();
+    debug.setDevOnly(true);
+    debug.disable();
 
     process.env.NODE_ENV = previousNodeEnv;
   });
@@ -44,10 +44,10 @@ describe('core debug compatibility', () => {
   test('extend preserves logger output override inheritance', () => {
     const lines: string[] = [];
 
-    atkDebug.setDevOnly(false);
-    atkDebug.enable('compat:extend*');
+    debug.setDevOnly(false);
+    debug.enable('compat:extend*');
 
-    const base = atkDebug('compat:extend');
+    const base = debug('compat:extend');
     base.log = (...args: unknown[]) => {
       lines.push(args.map((arg) => String(arg)).join(' '));
     };
@@ -60,7 +60,7 @@ describe('core debug compatibility', () => {
     assert.equal(lines.some((line) => line.includes('extended log %d')), true);
     assert.equal(lines.some((line) => line.includes(' 1 ')), true);
 
-    atkDebug.disable();
-    atkDebug.setDevOnly(true);
+    debug.disable();
+    debug.setDevOnly(true);
   });
 });

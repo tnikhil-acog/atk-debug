@@ -1,20 +1,20 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-atkDebug.setDevOnly(false);
-atkDebug.enable('workflow:static:*,-workflow:static:skip');
+debug.setDevOnly(false);
+debug.enable('workflow:static:*,-workflow:static:skip');
 
-const keep = atkDebug('workflow:static:keep');
-const skip = atkDebug('workflow:static:skip');
+const keep = debug('workflow:static:keep');
+const skip = debug('workflow:static:skip');
 
 keep('this should be visible');
 skip('this should be hidden');
 
-const previous = atkDebug.disable();
+const previous = debug.disable();
 console.log('disable_return', previous);
 
-atkDebug.enable(previous);
-console.log('enabled_keep', atkDebug.enabled('workflow:static:keep'));
-console.log('enabled_skip', atkDebug.enabled('workflow:static:skip'));
+debug.enable(previous);
+console.log('enabled_keep', debug.enabled('workflow:static:keep'));
+console.log('enabled_skip', debug.enabled('workflow:static:skip'));
 
-atkDebug.disable();
-atkDebug.setDevOnly(true);
+debug.disable();
+debug.setDevOnly(true);

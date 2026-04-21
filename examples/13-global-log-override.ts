@@ -1,25 +1,25 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-atkDebug.setDevOnly(false);
-atkDebug.enable('workflow:stream:*');
+debug.setDevOnly(false);
+debug.enable('workflow:stream:*');
 
-const originalLog = atkDebug.log;
+const originalLog = debug.log;
 const captured: string[] = [];
 
-atkDebug.log = (...args: unknown[]) => {
+debug.log = (...args: unknown[]) => {
   const line = args.map((arg) => String(arg)).join(' ');
   captured.push(line);
   console.log('[GLOBAL_STREAM]', line);
 };
 
-const alpha = atkDebug('workflow:stream:alpha');
-const beta = atkDebug('workflow:stream:beta');
+const alpha = debug('workflow:stream:alpha');
+const beta = debug('workflow:stream:beta');
 
 alpha('alpha started');
 beta('beta started');
 
 console.log('captured_count', captured.length);
 
-atkDebug.log = originalLog;
-atkDebug.disable();
-atkDebug.setDevOnly(true);
+debug.log = originalLog;
+debug.disable();
+debug.setDevOnly(true);

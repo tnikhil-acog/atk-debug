@@ -1,7 +1,7 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-const indexerLog = atkDebug('workflow:jobs:indexer');
-const validatorLog = atkDebug('workflow:jobs:validator');
+const indexerLog = debug('workflow:jobs:indexer');
+const validatorLog = debug('workflow:jobs:validator');
 
 const redirectedLines: string[] = [];
 

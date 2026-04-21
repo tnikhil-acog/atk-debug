@@ -12,7 +12,7 @@ export type AtkDebug = ((namespace: string) => ReturnType<typeof createDebug>) &
 	 * Enables one or more namespaces using debug patterns.
 	 *
 	 * @example
-	 * atkDebug.enable('app:*,db:*,-db:verbose');
+	 * debug.enable('app:*,db:*,-db:verbose');
 	 */
 	enable: (namespaces: string) => void;
 	/**
@@ -114,91 +114,91 @@ export type AtkDebug = ((namespace: string) => ReturnType<typeof createDebug>) &
  * @param namespace Debug namespace (for example: `service:http`).
  * @returns A callable debugger function for the provided namespace.
  */
-const atkDebug = ((namespace: string) => createDebug(namespace)) as AtkDebug;
+const debug = ((namespace: string) => createDebug(namespace)) as AtkDebug;
 
-Object.defineProperty(atkDebug, 'enable', {
+Object.defineProperty(debug, 'enable', {
 	value: debugTools.enable,
 });
-Object.defineProperty(atkDebug, 'disable', {
+Object.defineProperty(debug, 'disable', {
 	value: debugTools.disable,
 });
-Object.defineProperty(atkDebug, 'enabled', {
+Object.defineProperty(debug, 'enabled', {
 	value: debugTools.enabled,
 });
-Object.defineProperty(atkDebug, 'coerce', {
+Object.defineProperty(debug, 'coerce', {
 	value: debugTools.coerce,
 });
-Object.defineProperty(atkDebug, 'formatArgs', {
+Object.defineProperty(debug, 'formatArgs', {
 	value: debugTools.formatArgs,
 });
-Object.defineProperty(atkDebug, 'selectColor', {
+Object.defineProperty(debug, 'selectColor', {
 	value: debugTools.selectColor,
 });
-Object.defineProperty(atkDebug, 'formatters', {
+Object.defineProperty(debug, 'formatters', {
 	get: () => debugTools.formatters,
 });
-Object.defineProperty(atkDebug, 'names', {
+Object.defineProperty(debug, 'names', {
 	get: () => debugTools.names,
 	set: (next: string[]) => {
 		debugTools.names = next;
 	},
 });
-Object.defineProperty(atkDebug, 'skips', {
+Object.defineProperty(debug, 'skips', {
 	get: () => debugTools.skips,
 	set: (next: string[]) => {
 		debugTools.skips = next;
 	},
 });
-Object.defineProperty(atkDebug, 'inspectOpts', {
+Object.defineProperty(debug, 'inspectOpts', {
 	get: () => debugTools.inspectOpts,
 	set: (next: Record<string, unknown> | undefined) => {
 		debugTools.inspectOpts = next;
 	},
 });
-Object.defineProperty(atkDebug, 'humanize', {
+Object.defineProperty(debug, 'humanize', {
 	value: debugTools.humanize,
 });
-Object.defineProperty(atkDebug, 'setDevOnly', {
+Object.defineProperty(debug, 'setDevOnly', {
 	value: debugTools.setDevOnly,
 });
-Object.defineProperty(atkDebug, 'getDevOnly', {
+Object.defineProperty(debug, 'getDevOnly', {
 	value: debugTools.getDevOnly,
 });
-Object.defineProperty(atkDebug, 'setCallerMetaEnabled', {
+Object.defineProperty(debug, 'setCallerMetaEnabled', {
 	value: debugTools.setCallerMetaEnabled,
 });
-Object.defineProperty(atkDebug, 'getCallerMetaEnabled', {
+Object.defineProperty(debug, 'getCallerMetaEnabled', {
 	value: debugTools.getCallerMetaEnabled,
 });
-Object.defineProperty(atkDebug, 'log', {
+Object.defineProperty(debug, 'log', {
 	get: () => debugTools.log,
 	set: (writer: (...args: unknown[]) => void) => {
 		debugTools.log = writer;
 	},
 });
-Object.defineProperty(atkDebug, 'colors', {
+Object.defineProperty(debug, 'colors', {
 	get: () => debugTools.colors,
 	set: (next: (string | number)[]) => {
 		debugTools.colors = next;
 	},
 });
-Object.defineProperty(atkDebug, 'useColors', {
+Object.defineProperty(debug, 'useColors', {
 	value: debugTools.useColors,
 });
-Object.defineProperty(atkDebug, 'init', {
+Object.defineProperty(debug, 'init', {
 	value: debugTools.init,
 });
-Object.defineProperty(atkDebug, 'save', {
+Object.defineProperty(debug, 'save', {
 	value: debugTools.save,
 });
-Object.defineProperty(atkDebug, 'load', {
+Object.defineProperty(debug, 'load', {
 	value: debugTools.load,
 });
-Object.defineProperty(atkDebug, 'debug', {
-	value: atkDebug,
+Object.defineProperty(debug, 'debug', {
+	value: debug,
 });
-Object.defineProperty(atkDebug, 'default', {
-	value: atkDebug,
+Object.defineProperty(debug, 'default', {
+	value: debug,
 });
 
-export default atkDebug;
+export default debug;

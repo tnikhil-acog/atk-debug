@@ -1,6 +1,6 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-const base = atkDebug('workflow:auth');
+const base = debug('workflow:auth');
 const login = base.extend('login');
 const refresh = base.extend('refresh');
 const audit = base.extend('audit');

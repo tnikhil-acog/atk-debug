@@ -1,15 +1,15 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
-atkDebug.setDevOnly(false);
-atkDebug.enable('workflow:compat:*');
+debug.setDevOnly(false);
+debug.enable('workflow:compat:*');
 
-const auth = atkDebug('workflow:compat:auth');
+const auth = debug('workflow:compat:auth');
 const login = auth.extend('login');
 
 auth('base namespace ready');
 login('login attempt %d', 1);
 
-console.log('compat_enabled', atkDebug.enabled('workflow:compat:auth'));
+console.log('compat_enabled', debug.enabled('workflow:compat:auth'));
 
-atkDebug.disable();
-atkDebug.setDevOnly(true);
+debug.disable();
+debug.setDevOnly(true);

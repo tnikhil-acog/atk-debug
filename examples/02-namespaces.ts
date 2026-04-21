@@ -1,4 +1,4 @@
-import atkDebug from '../src/index.ts';
+import debug from '../src/index.ts';
 
 type UserRecord = {
   id: number;
@@ -6,9 +6,9 @@ type UserRecord = {
   active: boolean;
 };
 
-const requestLog = atkDebug('workflow:http:request');
-const repoLog = atkDebug('workflow:data:user-repo');
-const responseLog = atkDebug('workflow:http:response');
+const requestLog = debug('workflow:http:request');
+const repoLog = debug('workflow:data:user-repo');
+const responseLog = debug('workflow:http:response');
 
 function fakeQuery(userId: number): UserRecord {
   repoLog('Preparing query for userId=%d', userId);

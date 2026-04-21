@@ -25,13 +25,13 @@ npm install @aganitha/atk-debug
 ## Quick Start
 
 ```ts
-import atkDebug from '@aganitha/atk-debug';
+import debug from '@aganitha/atk-debug';
 
 // 1. Enable namespaces (programmatically or via DEBUG env var)
-atkDebug.enable('workflow:*');
+debug.enable('workflow:*');
 
 // 2. Create a logger
-const log = atkDebug('workflow:api');
+const log = debug('workflow:api');
 
 // 3. Log away!
 log('Request received', { method: 'GET', url: '/health' });
