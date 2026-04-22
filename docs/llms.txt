@@ -1,0 +1,205 @@
+# @aganitha/atk-debug
+
+Thin wrapper around the `debug` package. Adds `[file:line]` caller metadata to every log and runtime production guards. Full API parity with `debug` — anything that works with `debug` works here.
+
+## Install
+
+```
+bun add @aganitha/atk-debug
+npm install @aganitha/atk-debug
+```
+
+## Import
+
+```ts
+import debug from '@aganitha/atk-debug';
+```
+
+## Create a logger
+
+```ts
+const log = debug('service:module');
+log('started');                        // service:module [file.ts:5] started +0ms
+log('request %s %d', 'GET', 200);
+log('data: %O', { key: 'value' });    // %O uses util.inspect
+```
+
+## Enable namespaces
+
+Programmatic (must call before logging):
+```ts
+debug.enable('app:*');
+debug.enable('app:*,-app:verbose');   // negation with -
+```
+
+Via environment variable (preferred for flexibility):
+```
+DEBUG=app:* bun run dev
+DEBUG=app:*,-app:verbose bun run dev
+```
+
+IMPORTANT: `devOnly` defaults to `true` — when `NODE_ENV === 'production'`, `enable()` is a no-op and all logs are suppressed. Call `debug.setDevOnly(false)` first if you need logs in production or in test environments that set `NODE_ENV=production`.
+
+## Extend namespaces
+
+```ts
+const base  = debug('service:auth');
+const login = base.extend('login');   // → 'service:auth:login'
+const db    = login.extend('db');     // → 'service:auth:login:db'
+```
+
+## Format strings (inherited from debug)
+
+| Token | Renders as |
+|-------|------------|
+| `%s`  | String coercion |
+| `%d`  | Number |
+| `%i`  | Integer |
+| `%f`  | Float |
+| `%O`  | `util.inspect` (pretty, multiline) |
+| `%o`  | `util.inspect` (compact) |
+| `%j`  | `JSON.stringify` (built-in, overridable) |
+
+Pass objects as separate arguments — never concatenate strings with objects:
+```ts
+log('user %O', user);        // correct
+log('user ' + user);         // wrong — loses structure
+```
+
+## Runtime controls
+
+### devOnly — production suppression (default: true)
+
+```ts
+debug.setDevOnly(true);    // suppress when NODE_ENV === 'production'
+debug.setDevOnly(false);   // disable production guard
+debug.getDevOnly();        // → boolean
+```
+
+### callerMeta — [file:line] prefix (default: true)
+
+```ts
+debug.setCallerMetaEnabled(false);  // remove [file:line] prefix (performance)
+debug.setCallerMetaEnabled(true);   // re-enable
+debug.getCallerMetaEnabled();       // → boolean
+```
+
+Disabling caller metadata reduces overhead for high-frequency logging paths.
+
+## Enable / disable at runtime
+
+```ts
+debug.enable('ns:*');           // enable; respects devOnly
+const prev = debug.disable();   // disable all; returns previous namespace string
+debug.enable(prev);             // restore
+debug.enabled('ns:module');     // → boolean (respects devOnly)
+```
+
+## Conditional logging — skip expensive work
+
+```ts
+const log = debug('app:trace');
+if (log.enabled) {
+  log('expensive result: %O', buildReport());
+}
+```
+
+## Redirect output — per logger
+
+```ts
+import fs from 'fs';
+const log = debug('app:jobs');
+log.log = (...args) => fs.appendFileSync('app.log', args.join(' ') + '\n');
+```
+
+## Redirect output — global (all loggers)
+
+```ts
+const original = debug.log;
+debug.log = (...args) => myStream.write(args.join(' ') + '\n');
+// restore:
+debug.log = original;
+```
+
+## Custom formatters
+
+```ts
+debug.formatters.h = (v) => Buffer.from(String(v)).toString('hex');
+log('hex: %h', 'hello');    // → hex: 68656c6c6f
+
+debug.formatters.j = (v) => JSON.stringify(v);
+log('json: %j', obj);
+```
+
+## inspectOpts — control util.inspect depth
+
+```ts
+debug.inspectOpts = { depth: 2, colors: false };
+```
+
+## Logger instance properties
+
+```ts
+log.namespace   // → 'service:module'
+log.enabled     // → boolean (reflects devOnly + enable state)
+log.color       // → color assigned to this namespace
+log.diff        // → ms elapsed since last call on this logger
+log.destroy()   // → boolean, unregisters the logger
+```
+
+## Static properties / methods
+
+```ts
+debug.formatters        // Record<string, (v: unknown) => string>
+debug.names             // string[] — active enabled patterns
+debug.skips             // string[] — active negated patterns
+debug.colors            // (string | number)[] — color palette
+debug.humanize(1500)    // → '2s'
+debug.selectColor(ns)   // → color value for namespace
+debug.coerce(value)     // → debug-printable value
+debug.useColors()       // → boolean
+debug.save(namespaces)  // persist to storage
+debug.load()            // → string | undefined, restore from storage
+```
+
+## Type exports
+
+```ts
+import type { AtkDebug, DebugWithMeta, DebugTools } from '@aganitha/atk-debug';
+```
+
+- `AtkDebug` — type of the default export (callable + all static methods)
+- `DebugWithMeta` — type of an individual logger (`debug('ns')` return value)
+- `DebugTools` — type of the static methods surface
+
+## Key behaviors
+
+- **devOnly is on by default.** Tests or non-Node environments that do not set `NODE_ENV` to something other than `'production'` will log normally. Only `NODE_ENV === 'production'` suppresses.
+- **Caller metadata resolves the first non-library stack frame.** Works correctly through wrapper functions and `extend()`.
+- **`enable()` under devOnly=true + NODE_ENV=production is a silent no-op.** Set `devOnly(false)` before `enable()` when you need programmatic control regardless of environment.
+- **All loggers share global `devOnly` and `callerMeta` flags** — changing them affects every logger in the process.
+- **`extend()` propagates caller metadata correctly** — the child logger reports the actual callsite, not the extend() declaration.
+
+## Common patterns
+
+```ts
+// Hierarchy by service layer
+const svc  = debug('payments:service');
+const repo = debug('payments:repo');
+const http = debug('payments:http');
+
+// Namespace-per-file, extend for sub-operations
+const log  = debug('auth:session');
+const read = log.extend('read');
+const write = log.extend('write');
+
+// Structured object logging
+log('event %s payload %O', eventName, { userId, action, ts: Date.now() });
+
+// Performance guard
+debug.setCallerMetaEnabled(false);
+for (const item of hugeList) {
+  log('processing %d', item.id);
+}
+debug.setCallerMetaEnabled(true);
+```

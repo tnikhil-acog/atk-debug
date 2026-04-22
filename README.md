@@ -1,9 +1,6 @@
 # @aganitha/atk-debug
 
-> A powerful, thin wrapper around the popular `debug` package, enhanced with caller metadata (file/line) and advanced runtime controls.
-
-<a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
-<a href="https://bun.sh" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white" alt="Bun" /></a>
+A powerful, thin wrapper around the popular `debug` package, enhanced with caller metadata (file/line) and advanced runtime controls.
 
 ## Why atk-debug?
 
@@ -40,8 +37,8 @@ log('Request received', { method: 'GET', url: '/health' });
 
 ## Essential Documentation
 
-- <strong><a href="https://github.com/tnikhil-acog/atk-debug/blob/main/GUIDE.md" target="_blank" rel="noopener noreferrer">Full Guide</a></strong>: Deep dive into all features and configuration.
-- <strong><a href="https://github.com/tnikhil-acog/atk-debug/tree/main/examples" target="_blank" rel="noopener noreferrer">Examples</a></strong>: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
+- <strong><a href="https://github.com/aganitha/atk-debug/blob/main/docs/guide.md" target="_blank" rel="noopener noreferrer">Full Guide</a></strong>: Deep dive into all features and configuration.
+- <strong><a href="https://github.com/aganitha/atk-debug/tree/main/examples" target="_blank" rel="noopener noreferrer">Examples</a></strong>: 15+ runnable scripts demonstrating everything from structured logging to custom output redirection.
 
 ## Development
 

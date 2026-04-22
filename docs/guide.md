@@ -118,4 +118,4 @@ debug.log = (...args) => {
 
 ---
 
-For more details, check the [examples directory](https://github.com/tnikhil-acog/atk-debug/tree/main/examples) which contains focused tutorials for every feature.
+For more details, check the [examples directory](https://github.com/aganitha/atk-debug/tree/main/examples) which contains focused tutorials for every feature.
