@@ -74,6 +74,14 @@ export type AtkDebug = ((namespace: string) => ReturnType<typeof createDebug>) &
 	 */
 	getCallerMetaEnabled: () => boolean;
 	/**
+	 * Toggles terminal hyperlinks (OSC 8) for metadata.
+	 */
+	setClickable: (enabled: boolean) => void;
+	/**
+	 * Returns whether terminal hyperlinks are enabled.
+	 */
+	getClickable: () => boolean;
+	/**
 	 * Global output writer used by all debuggers.
 	 */
 	log: (...args: unknown[]) => void;
@@ -169,6 +177,12 @@ Object.defineProperty(debug, 'setCallerMetaEnabled', {
 });
 Object.defineProperty(debug, 'getCallerMetaEnabled', {
 	value: debugTools.getCallerMetaEnabled,
+});
+Object.defineProperty(debug, 'setClickable', {
+	value: debugTools.setClickable,
+});
+Object.defineProperty(debug, 'getClickable', {
+	value: debugTools.getClickable,
 });
 Object.defineProperty(debug, 'log', {
 	get: () => debugTools.log,

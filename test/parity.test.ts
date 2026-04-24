@@ -39,6 +39,7 @@ describe('Multiple Argument Handling', () => {
 		const log = debug('test:args');
 		log.enabled = true;
 		log.useColors = false; // Disable colors for predictable output
+		debug.setClickable(false); // Ensure predictable output for tests
 		let lastArgs: any[] = [];
 		log.log = (...args) => { lastArgs = args; };
 		
@@ -66,6 +67,7 @@ describe('Multiple Argument Handling', () => {
 		const log = debug('test:format');
 		log.enabled = true;
 		log.useColors = false;
+		debug.setClickable(false);
 		let lastArgs: any[] = [];
 		log.log = (...args) => { lastArgs = args; };
 		
@@ -83,6 +85,7 @@ describe('Caller Metadata Toggle', () => {
 		const log = debug('test:toggle');
 		log.enabled = true;
 		log.useColors = false;
+		debug.setClickable(false);
 		let lastArgs: any[] = [];
 		log.log = (...args) => { lastArgs = args; };
 

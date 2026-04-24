@@ -21,11 +21,13 @@ type CoreDebugger = ReturnType<CoreDebugFactory> & { useColors: boolean };
 type RuntimeConfig = {
 	devOnly: boolean;
 	callerMetaEnabled: boolean;
+	clickable: boolean;
 };
 
 const runtimeConfig: RuntimeConfig = {
 	devOnly: true,
 	callerMetaEnabled: true,
+	clickable: true,
 };
 
 function isRuntimeEnabled(): boolean {
@@ -38,6 +40,7 @@ function isRuntimeEnabled(): boolean {
 type CallerInfo = {
 	file: string;
 	line: number;
+	fullPath: string;
 };
 
 /**
@@ -73,6 +76,8 @@ export type DebugTools = {
 	getDevOnly: () => boolean;
 	setCallerMetaEnabled: (enabled: boolean) => void;
 	getCallerMetaEnabled: () => boolean;
+	setClickable: (enabled: boolean) => void;
+	getClickable: () => boolean;
 	log: (...args: unknown[]) => void;
 	// Missing core debug exports
 	colors: (string | number)[];
@@ -128,6 +133,10 @@ export const debugTools: DebugTools = {
 		runtimeConfig.callerMetaEnabled = enabled;
 	},
 	getCallerMetaEnabled: () => runtimeConfig.callerMetaEnabled,
+	setClickable: (enabled: boolean) => {
+		runtimeConfig.clickable = enabled;
+	},
+	getClickable: () => runtimeConfig.clickable,
 	get log() {
 		return coreDebug.log as (...args: unknown[]) => void;
 	},
@@ -184,6 +193,7 @@ function parseFirstExternalFrame(stack: string[] | undefined): CallerInfo | null
 		return {
 			file: getBasename(filePath),
 			line: Number(match[2]),
+			fullPath: filePath,
 		};
 	}
 
@@ -194,9 +204,9 @@ function getCallerInfo(): CallerInfo {
 	try {
 		const err = new Error();
 		const parsed = parseFirstExternalFrame(err.stack ? err.stack.split('\n') : undefined);
-		return parsed ?? { file: 'unknown', line: 0 };
+		return parsed ?? { file: 'unknown', line: 0, fullPath: 'unknown' };
 	} catch {
-		return { file: 'unknown', line: 0 };
+		return { file: 'unknown', line: 0, fullPath: 'unknown' };
 	}
 }
 
@@ -207,25 +217,39 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 
 		let file = '';
 		let line = 0;
+		let fullPath = '';
 
 		if (runtimeConfig.callerMetaEnabled) {
 			const callsite = getCallerInfo();
 			const resolvedCaller = callsite.file === 'unknown' ? declarationCaller : callsite;
 			file = resolvedCaller.file;
 			line = resolvedCaller.line;
+			fullPath = resolvedCaller.fullPath;
 		}
 
 		// Correctly handle multiple arguments and format strings
 		if (typeof args[0] === 'string') {
 			const [format, ...rest] = args as [string, ...unknown[]];
 			if (runtimeConfig.callerMetaEnabled) {
-				core(`[%s:%d] ${format}`, file, line, ...rest);
+				if (runtimeConfig.clickable && fullPath !== 'unknown') {
+					const url = encodeURI(`file://${fullPath}`);
+					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
+					core(`${meta} ${format}`, ...rest);
+				} else {
+					core(`[%s:%d] ${format}`, file, line, ...rest);
+				}
 			} else {
 				core(format, ...rest);
 			}
 		} else if (args.length === 0) {
 			if (runtimeConfig.callerMetaEnabled) {
-				core('[%s:%d]', file, line);
+				if (runtimeConfig.clickable && fullPath !== 'unknown') {
+					const url = encodeURI(`file://${fullPath}`);
+					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
+					core(`${meta}`);
+				} else {
+					core('[%s:%d]', file, line);
+				}
 			} else {
 				core('');
 			}
@@ -233,7 +257,13 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 			// If no format string, prefix with metadata and then pass all args
 			// Standard debug will treat the first arg as a value (will unshift %O)
 			if (runtimeConfig.callerMetaEnabled) {
-				core('[%s:%d] %O', file, line, ...args);
+				if (runtimeConfig.clickable && fullPath !== 'unknown') {
+					const url = encodeURI(`file://${fullPath}`);
+					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
+					core(`${meta} %O`, ...args);
+				} else {
+					core('[%s:%d] %O', file, line, ...args);
+				}
 			} else {
 				core('%O', ...args);
 			}
