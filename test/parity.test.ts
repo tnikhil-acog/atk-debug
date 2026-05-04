@@ -36,14 +36,14 @@ describe('API Parity with core debug', () => {
 
 describe('Multiple Argument Handling', () => {
 	test('should handle multiple arguments without format string', () => {
-		const log = debug('test:args');
-		log.enabled = true;
-		log.useColors = false; // Disable colors for predictable output
+		const trace = debug('test:args');
+		trace.enabled = true;
+		trace.useColors = false; // Disable colors for predictable output
 		debug.setClickable(false); // Ensure predictable output for tests
 		let lastArgs: any[] = [];
-		log.log = (...args) => { lastArgs = args; };
+		trace.log = (...args) => { lastArgs = args; };
 		
-		log({ a: 1 }, { b: 2 });
+		trace({ a: 1 }, { b: 2 });
 		
 		expect(Array.isArray(lastArgs)).toBe(true);
 		expect(lastArgs.length).toBeGreaterThan(0);
@@ -64,14 +64,14 @@ describe('Multiple Argument Handling', () => {
 	});
 
 	test('should handle multiple arguments with format string', () => {
-		const log = debug('test:format');
-		log.enabled = true;
-		log.useColors = false;
+		const trace = debug('test:format');
+		trace.enabled = true;
+		trace.useColors = false;
 		debug.setClickable(false);
 		let lastArgs: any[] = [];
-		log.log = (...args) => { lastArgs = args; };
+		trace.log = (...args) => { lastArgs = args; };
 		
-		log('hello %s %s', 'world', 'again');
+		trace('hello %s %s', 'world', 'again');
 		
 		const firstArg = lastArgs[0];
 		expect(firstArg).toContain('[%s:%d] hello %s %s');
@@ -82,21 +82,21 @@ describe('Multiple Argument Handling', () => {
 
 describe('Caller Metadata Toggle', () => {
 	test('should respect caller metadata toggle', () => {
-		const log = debug('test:toggle');
-		log.enabled = true;
-		log.useColors = false;
+		const trace = debug('test:toggle');
+		trace.enabled = true;
+		trace.useColors = false;
 		debug.setClickable(false);
 		let lastArgs: any[] = [];
-		log.log = (...args) => { lastArgs = args; };
+		trace.log = (...args) => { lastArgs = args; };
 
 		debug.setCallerMetaEnabled(false);
-		log('no metadata');
+		trace('no metadata');
 		// Should NOT contain the [file:line] meta, but standard debug namespace prefix remains
 		expect(lastArgs[0]).not.toContain('[%s:%d]');
 		expect(lastArgs[0]).toContain('no metadata');
 
 		debug.setCallerMetaEnabled(true);
-		log('with metadata');
+		trace('with metadata');
 		expect(lastArgs[0]).toContain('[%s:%d] with metadata');
 	});
 });

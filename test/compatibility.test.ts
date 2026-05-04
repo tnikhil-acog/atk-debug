@@ -5,9 +5,9 @@ import debug from '../src/index.ts';
 
 describe('core debug compatibility', () => {
   test('default export is callable and returns debugger', () => {
-    const logger = debug('compat:callable');
-    assert.equal(typeof logger, 'function');
-    assert.equal(logger.namespace, 'compat:callable');
+    const tracer = debug('compat:callable');
+    assert.equal(typeof tracer, 'function');
+    assert.equal(tracer.namespace, 'compat:callable');
   });
 
   test('static enable/disable/enabled passthrough works', () => {
@@ -53,11 +53,11 @@ describe('core debug compatibility', () => {
     };
 
     const child = base.extend('child');
-    child('extended log %d', 1);
+    child('extended trace %d', 1);
 
     assert.equal(lines.length > 0, true);
     assert.equal(lines.some((line) => line.includes('compat:extend:child')), true);
-    assert.equal(lines.some((line) => line.includes('extended log %d')), true);
+    assert.equal(lines.some((line) => line.includes('extended trace %d')), true);
     assert.equal(lines.some((line) => line.includes(' 1 ')), true);
 
     debug.disable();

@@ -6,13 +6,13 @@ process.env.NODE_ENV = 'production';
 debug.setDevOnly(true);
 debug.enable('workflow:devonly:*');
 
-const devOnlyLog = debug('workflow:devonly:demo');
-devOnlyLog('hidden_in_prod');
+const devOnlyTrace = debug('workflow:devonly:demo');
+devOnlyTrace('hidden_in_prod');
 console.log('enabled_with_devonly', debug.enabled('workflow:devonly:demo'));
 
 debug.setDevOnly(false);
 debug.enable('workflow:devonly:*');
-devOnlyLog('visible_with_override');
+devOnlyTrace('visible_with_override');
 console.log('enabled_with_override', debug.enabled('workflow:devonly:demo'));
 
 debug.disable();

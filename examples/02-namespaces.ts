@@ -6,23 +6,23 @@ type UserRecord = {
   active: boolean;
 };
 
-const requestLog = debug('workflow:http:request');
-const repoLog = debug('workflow:data:user-repo');
-const responseLog = debug('workflow:http:response');
+const requestTrace = debug('workflow:http:request');
+const repoTrace = debug('workflow:data:user-repo');
+const responseTrace = debug('workflow:http:response');
 
 function fakeQuery(userId: number): UserRecord {
-  repoLog('Preparing query for userId=%d', userId);
+  repoTrace('Preparing query for userId=%d', userId);
   const row: UserRecord = { id: userId, role: 'admin', active: true };
-  repoLog('Query result row: %O', row);
+  repoTrace('Query result row: %O', row);
   return row;
 }
 
 function handleRequest(path: string, userId: number): { ok: true; user: UserRecord } {
-  requestLog('Incoming request path=%s userId=%d', path, userId);
+  requestTrace('Incoming request path=%s userId=%d', path, userId);
   const user = fakeQuery(userId);
-  responseLog('Sending response for user=%O', user);
+  responseTrace('Sending response for user=%O', user);
   return { ok: true, user };
 }
 
 const response = handleRequest('/users/42', 42);
-responseLog('Request completed: %O', response);
+responseTrace('Request completed: %O', response);

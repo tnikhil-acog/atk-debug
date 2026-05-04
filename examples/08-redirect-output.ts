@@ -1,7 +1,7 @@
 import debug from '../src/index.ts';
 
-const indexerLog = debug('workflow:jobs:indexer');
-const validatorLog = debug('workflow:jobs:validator');
+const indexerTrace = debug('workflow:jobs:indexer');
+const validatorTrace = debug('workflow:jobs:validator');
 
 const redirectedLines: string[] = [];
 
@@ -11,13 +11,13 @@ const redirectWriter = (...args: unknown[]): void => {
   console.log('[REDIRECTED]', line);
 };
 
-indexerLog.log = redirectWriter;
-validatorLog.log = redirectWriter;
+indexerTrace.log = redirectWriter;
+validatorTrace.log = redirectWriter;
 
 function runWorkflow(task: string): void {
-  indexerLog('Workflow start task=%s', task);
-  validatorLog('Workflow validation status=%s task=%s', 'ok', task);
-  indexerLog('Workflow complete task=%s', task);
+  indexerTrace('Workflow start task=%s', task);
+  validatorTrace('Workflow validation status=%s task=%s', 'ok', task);
+  indexerTrace('Workflow complete task=%s', task);
 }
 
 runWorkflow('indexing');

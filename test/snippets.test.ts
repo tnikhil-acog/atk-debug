@@ -47,8 +47,8 @@ const cases: SnippetCase[] = [
     mustInclude: ['workflow:http:request', 'workflow:data:user-repo'],
   },
   {
-    name: '03 structured logging',
-    file: '03-structured-logging.ts',
+    name: '03 structured tracing',
+    file: '03-structured-tracing.ts',
     env: { DEBUG: 'workflow:user-ingest:*' },
     mustInclude: ['workflow:user-ingest:payload', 'Structured user object ready'],
   },
@@ -73,7 +73,7 @@ const cases: SnippetCase[] = [
   {
     name: '07 dynamic enable disable',
     file: '07-dynamic-enable-disable.ts',
-    mustInclude: ['Enabled all runtime namespaces', 'DB logs now enabled too'],
+    mustInclude: ['Enabled all runtime namespaces', 'DB traces now enabled too'],
   },
   {
     name: '08 redirect output',
@@ -104,8 +104,8 @@ const cases: SnippetCase[] = [
     mustInclude: ['workflow:static:keep', 'enabled_keep true', 'enabled_skip false'],
   },
   {
-    name: '13 global log override',
-    file: '13-global-log-override.ts',
+    name: '13 global trace override',
+    file: '13-global-trace-override.ts',
     mustInclude: ['[GLOBAL_STREAM]', 'captured_count 2'],
   },
   {

@@ -16,7 +16,7 @@ function parseFirstExternalFrameLegacy(stack: string[] | undefined): any {
         if (!match) continue;
         const filePath = match[1];
         const lower = filePath.toLowerCase();
-        if (lower === 'native' || lower.includes('debugwithmeta.ts') || lower.includes('/node_modules/') || lower.startsWith('node:') || lower.includes('internal/')) continue;
+        if (lower === 'native' || lower.includes('benchmark.ts') || lower.includes('/node_modules/') || lower.startsWith('node:') || lower.includes('internal/')) continue;
         return { file: getBasenameLegacy(filePath), line: Number(match[2]), fullPath: filePath };
     }
     return null;
@@ -32,9 +32,6 @@ function getCallerInfoLegacy(): any {
 }
 
 // --- OPTIMIZED (The one currently in src) ---
-// We'll import it or just re-implement it here if it's not exported.
-// Since it's internal to debugWithMeta.ts, I'll re-implement the EXACT logic I just added for a clean comparison.
-
 function getBasename(filePath: string): string {
 	const parts = filePath.split(/[\\/]/);
 	return parts[parts.length - 1] || 'unknown';
@@ -51,11 +48,11 @@ function getCallerInfoOptimized(): any {
 		if (!Array.isArray(stack)) return { file: 'unknown', line: 0, fullPath: 'unknown' };
 		for (let i = 1; i < stack.length; i++) {
 			const frame = stack[i];
-			const filePath = typeof frame.getFileName === 'function' ? frame.getFileName() : null;
+			const filePath = frame.getFileName();
 			if (!filePath) continue;
 			const lower = filePath.toLowerCase();
 			if (lower === 'native' || lower.includes('benchmark.ts') || lower.includes('/node_modules/') || lower.startsWith('node:') || lower.includes('internal/')) continue;
-			return { file: getBasename(filePath), line: typeof frame.getLineNumber === 'function' ? frame.getLineNumber() : 0, fullPath: filePath };
+			return { file: getBasename(filePath), line: frame.getLineNumber() || 0, fullPath: filePath };
 		}
 		return { file: 'unknown', line: 0, fullPath: 'unknown' };
 	} catch {
@@ -66,12 +63,35 @@ function getCallerInfoOptimized(): any {
 	}
 }
 
+// --- SUPER OPTIMIZED (Pre-set prepareStackTrace) ---
+// This version avoids the overhead of changing the global every call.
+// However, it's not thread-safe if other libraries use it.
+// But in a single-threaded environment like Node/Bun, it's mostly fine if we wrap the call.
+function getCallerInfoSuperOptimized(): any {
+    const originalPrepare = Error.prepareStackTrace;
+    Error.prepareStackTrace = (_, stack) => stack;
+    const err = new Error();
+    const stack = err.stack as unknown as any[];
+    Error.prepareStackTrace = originalPrepare;
+    
+    if (!Array.isArray(stack)) return { file: 'unknown', line: 0, fullPath: 'unknown' };
+    for (let i = 1; i < stack.length; i++) {
+        const frame = stack[i];
+        const filePath = frame.getFileName();
+        if (!filePath) continue;
+        const lower = filePath.toLowerCase();
+        if (lower === 'native' || lower.includes('benchmark.ts') || lower.includes('/node_modules/') || lower.startsWith('node:') || lower.includes('internal/')) continue;
+        return { file: getBasename(filePath), line: frame.getLineNumber() || 0, fullPath: filePath };
+    }
+    return { file: 'unknown', line: 0, fullPath: 'unknown' };
+}
+
 // --- BENCHMARK ---
 const ITERATIONS = 10000;
 
 function benchmark(name: string, fn: () => void) {
     // Warmup
-    for (let i = 0; i < 100; i++) fn();
+    for (let i = 0; i < 1000; i++) fn();
     
     const start = performance.now();
     for (let i = 0; i < ITERATIONS; i++) {
@@ -87,3 +107,4 @@ console.log(`Running benchmark with ${ITERATIONS} iterations...\n`);
 
 benchmark("Legacy (String Parsing)", getCallerInfoLegacy);
 benchmark("Optimized (Structured API)", getCallerInfoOptimized);
+benchmark("Super Optimized (Minimal Overrides)", getCallerInfoSuperOptimized);

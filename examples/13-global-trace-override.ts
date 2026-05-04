@@ -3,7 +3,7 @@ import debug from '../src/index.ts';
 debug.setDevOnly(false);
 debug.enable('workflow:stream:*');
 
-const originalLog = debug.log;
+const originalTrace = debug.log;
 const captured: string[] = [];
 
 debug.log = (...args: unknown[]) => {
@@ -20,6 +20,6 @@ beta('beta started');
 
 console.log('captured_count', captured.length);
 
-debug.log = originalLog;
+debug.log = originalTrace;
 debug.disable();
 debug.setDevOnly(true);

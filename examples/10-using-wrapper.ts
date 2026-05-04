@@ -7,13 +7,13 @@ type CreatedUser = {
   createdAt: string;
 };
 
-const log = debug('workflow:user:create');
-const validationLog = log.extend('validation');
-const serviceLog = log.extend('service');
+const trace = debug('workflow:user:create');
+const validationTrace = trace.extend('validation');
+const serviceTrace = trace.extend('service');
 
 function createUser(name: string, email: string): CreatedUser {
-  validationLog('Validating incoming user payload for email=%s', email);
-  serviceLog('createUser start name=%s email=%s', name, email);
+  validationTrace('Validating incoming user payload for email=%s', email);
+  serviceTrace('createUser start name=%s email=%s', name, email);
 
   const user: CreatedUser = {
     id: Math.floor(Math.random() * 10000),
@@ -22,9 +22,9 @@ function createUser(name: string, email: string): CreatedUser {
     createdAt: new Date().toISOString(),
   };
 
-  serviceLog('createUser done user=%O', user);
+  serviceTrace('createUser done user=%O', user);
   return user;
 }
 
 const user = createUser('Nikhil', 'nikhil@example.com');
-log('User created successfully id=%d', user.id);
+trace('User created successfully id=%d', user.id);

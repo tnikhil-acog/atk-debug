@@ -14,15 +14,15 @@ type ServerState = {
   ok: boolean;
 };
 
-const bootstrapLog = debug('workflow:bootstrap:init');
-const healthLog = debug('workflow:bootstrap:health');
+const bootstrapTrace = debug('workflow:bootstrap:init');
+const healthTrace = debug('workflow:bootstrap:health');
 
 function bootServer(config: BootConfig): ServerState {
-  bootstrapLog('Boot requested with config: %O', config);
+  bootstrapTrace('Boot requested with config: %O', config);
 
   const checks = ['env', 'ports', 'cache'];
   for (const check of checks) {
-    healthLog('Running preflight check: %s', check);
+    healthTrace('Running preflight check: %s', check);
   }
 
   const serverState: ServerState = {
@@ -33,10 +33,10 @@ function bootServer(config: BootConfig): ServerState {
     ok: true,
   };
 
-  bootstrapLog('Server started: %O', serverState);
-  healthLog('Health checks passed for %s:%d', serverState.host, serverState.port);
+  bootstrapTrace('Server started: %O', serverState);
+  healthTrace('Health checks passed for %s:%d', serverState.host, serverState.port);
   return serverState;
 }
 
 const result = bootServer({ host: 'localhost', port: 3000, env: 'dev' });
-bootstrapLog('Final state snapshot: %O', result);
+bootstrapTrace('Final state snapshot: %O', result);

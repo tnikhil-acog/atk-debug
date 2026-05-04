@@ -171,6 +171,24 @@ function getBasename(filePath: string): string {
 	return parts[parts.length - 1] || 'unknown';
 }
 
+/**
+ * Guarded Structured Stack Trace API.
+ * We override this once at the module level to avoid the overhead of re-assigning it 
+ * on every log call. The flag ensures we only return structured data for our own calls.
+ */
+let isInternalCapturing = false;
+const originalPrepare = Error.prepareStackTrace;
+
+// Only perform the override if we are in a V8-like environment that supports it
+if (typeof Error.captureStackTrace === 'function') {
+	Error.prepareStackTrace = (err, stack) => {
+		if (isInternalCapturing) return stack;
+		if (typeof originalPrepare === 'function') return originalPrepare(err, stack);
+		// Default behavior: return the stringified stack
+		return String(err.stack || '');
+	};
+}
+
 function parseFirstExternalFrame(stack: string[] | undefined): CallerInfo | null {
 	if (!stack) return null;
 
@@ -201,12 +219,61 @@ function parseFirstExternalFrame(stack: string[] | undefined): CallerInfo | null
 }
 
 function getCallerInfo(): CallerInfo {
+	// Fallback for non-V8 environments (Firefox, Safari, etc.)
+	if (typeof Error.captureStackTrace !== 'function') {
+		try {
+			const err = new Error();
+			const stack = err.stack ? err.stack.split('\n') : undefined;
+			return parseFirstExternalFrame(stack) ?? { file: 'unknown', line: 0, fullPath: 'unknown' };
+		} catch {
+			return { file: 'unknown', line: 0, fullPath: 'unknown' };
+		}
+	}
+
+	const originalLimit = Error.stackTraceLimit;
+
 	try {
-		const err = new Error();
-		const parsed = parseFirstExternalFrame(err.stack ? err.stack.split('\n') : undefined);
-		return parsed ?? { file: 'unknown', line: 0, fullPath: 'unknown' };
-	} catch {
+		isInternalCapturing = true;
+		// Limit stack depth to reduce walking overhead
+		Error.stackTraceLimit = 10;
+
+		const target = { stack: [] };
+		Error.captureStackTrace(target, getCallerInfo);
+		const stack = target.stack as unknown as any[];
+
+		isInternalCapturing = false;
+
+		if (!Array.isArray(stack)) {
+			return { file: 'unknown', line: 0, fullPath: 'unknown' };
+		}
+
+		for (let i = 0; i < stack.length; i++) {
+			const frame = stack[i];
+			const filePath = typeof frame.getFileName === 'function' ? frame.getFileName() : null;
+			if (!filePath) continue;
+
+			const lower = filePath.toLowerCase();
+
+			// Skip wrapper/internal runtime frames
+			if (lower === 'native') continue;
+			if (lower.includes('debugwithmeta.ts')) continue;
+			if (lower.includes('/node_modules/')) continue;
+			if (lower.startsWith('node:')) continue;
+			if (lower.includes('internal/')) continue;
+
+			return {
+				file: getBasename(filePath),
+				line: typeof frame.getLineNumber === 'function' ? frame.getLineNumber() : 0,
+				fullPath: filePath,
+			};
+		}
+
 		return { file: 'unknown', line: 0, fullPath: 'unknown' };
+	} catch {
+		isInternalCapturing = false;
+		return { file: 'unknown', line: 0, fullPath: 'unknown' };
+	} finally {
+		Error.stackTraceLimit = originalLimit;
 	}
 }
 
@@ -232,7 +299,8 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 			const [format, ...rest] = args as [string, ...unknown[]];
 			if (runtimeConfig.callerMetaEnabled) {
 				if (runtimeConfig.clickable && fullPath !== 'unknown') {
-					const url = encodeURI(`file://${fullPath}`);
+					// Reverting to the safer #L fragment which ensures the file at least opens
+					const url = encodeURI(`file://${fullPath}`) + `#L${line}`;
 					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
 					core(`${meta} ${format}`, ...rest);
 				} else {
@@ -244,7 +312,7 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 		} else if (args.length === 0) {
 			if (runtimeConfig.callerMetaEnabled) {
 				if (runtimeConfig.clickable && fullPath !== 'unknown') {
-					const url = encodeURI(`file://${fullPath}`);
+					const url = encodeURI(`file://${fullPath}`) + `#L${line}`;
 					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
 					core(`${meta}`);
 				} else {
@@ -258,7 +326,7 @@ function wrapCoreDebugger(core: CoreDebugger, declarationCaller: CallerInfo): De
 			// Standard debug will treat the first arg as a value (will unshift %O)
 			if (runtimeConfig.callerMetaEnabled) {
 				if (runtimeConfig.clickable && fullPath !== 'unknown') {
-					const url = encodeURI(`file://${fullPath}`);
+					const url = encodeURI(`file://${fullPath}`) + `#L${line}`;
 					const meta = `\x1b]8;;${url}\x1b\\` + `[${file}:${line}]` + `\x1b]8;;\x1b\\`;
 					core(`${meta} %O`, ...args);
 				} else {

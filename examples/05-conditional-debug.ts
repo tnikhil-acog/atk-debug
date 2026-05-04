@@ -5,8 +5,8 @@ type ComputationResult = {
   score: number;
 };
 
-const gateLog = debug('workflow:compute:gate');
-const traceLog = debug('workflow:compute:trace');
+const gateTrace = debug('workflow:compute:gate');
+const traceTrace = debug('workflow:compute:trace');
 
 function heavyComputation(limit: number): ComputationResult {
   let score = 0;
@@ -17,16 +17,16 @@ function heavyComputation(limit: number): ComputationResult {
 }
 
 function compute(limit: number): ComputationResult {
-  if (traceLog.enabled) {
-    gateLog('Debug enabled; running expensive trace for limit=%d', limit);
+  if (traceTrace.enabled) {
+    gateTrace('Debug enabled; running expensive trace for limit=%d', limit);
     const result = heavyComputation(limit);
-    traceLog('Computation details: %O', result);
+    traceTrace('Computation details: %O', result);
     return result;
   }
 
-  gateLog('Trace disabled; running normal computation for limit=%d', limit);
+  gateTrace('Trace disabled; running normal computation for limit=%d', limit);
   return heavyComputation(limit);
 }
 
 const outcome = compute(10000);
-gateLog('Final outcome: %O', outcome);
+gateTrace('Final outcome: %O', outcome);

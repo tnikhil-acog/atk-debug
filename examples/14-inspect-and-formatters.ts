@@ -10,9 +10,9 @@ debug.inspectOpts = {
   colors: false,
 };
 
-const inspectLog = debug('workflow:inspect:demo');
-inspectLog('custom formatter %h', 'hello');
-inspectLog('object preview %O', { deep: { nested: { value: 1 } }, arr: [1, 2, 3] });
+const inspectTrace = debug('workflow:inspect:demo');
+inspectTrace('custom formatter %h', 'hello');
+inspectTrace('object preview %O', { deep: { nested: { value: 1 } }, arr: [1, 2, 3] });
 
 console.log('select_color_type', typeof debug.selectColor('workflow:inspect:demo'));
 console.log('humanized_1500', debug.humanize(1500));

@@ -16,8 +16,8 @@ type SanitizedUser = {
   safeTokenPreview: string | null;
 };
 
-const ingestLog = debug('workflow:user-ingest:payload');
-const sanitizeLog = debug('workflow:user-ingest:sanitize');
+const ingestTrace = debug('workflow:user-ingest:payload');
+const sanitizeTrace = debug('workflow:user-ingest:sanitize');
 
 function sanitizeUser(input: RawUserInput): SanitizedUser {
   const user = {
@@ -28,7 +28,7 @@ function sanitizeUser(input: RawUserInput): SanitizedUser {
     safeTokenPreview: input.token ? `${input.token.slice(0, 4)}***` : null,
   };
 
-  sanitizeLog('Sanitized user: %O', user);
+  sanitizeTrace('Sanitized user: %O', user);
   return user;
 }
 
@@ -40,6 +40,6 @@ const raw: RawUserInput = {
   token: 'abc123token',
 };
 
-ingestLog('Raw payload received: %O', { ...raw, token: '[hidden]' });
+ingestTrace('Raw payload received: %O', { ...raw, token: '[hidden]' });
 const user = sanitizeUser(raw);
-sanitizeLog('Structured user object ready: %O', user);
+sanitizeTrace('Structured user object ready: %O', user);
